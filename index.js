@@ -108,6 +108,11 @@ function setup() {
   vid1Text.minFilter = THREE.LinearFilter;
   vid1Text.magFilter = THREE.LinearFilter;
 
+  addEventListener("mousedown", (e) => {
+    video.play();
+    video2.play();
+  });
+
   tvloader.load("tvs.gltf", (gltf) => {
     tvs = gltf.scene;
     const tvMat = new THREE.MeshStandardMaterial({
