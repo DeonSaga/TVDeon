@@ -108,7 +108,8 @@ function setup() {
   vid1Text.minFilter = THREE.LinearFilter;
   vid1Text.magFilter = THREE.LinearFilter;
 
-  addEventListener("mousedown", (e) => {
+  document.addEventListener("click", (e) => {
+    console.log("clicked");
     video.play();
     video2.play();
   });
