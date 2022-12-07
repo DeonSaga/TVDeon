@@ -11,6 +11,7 @@ let scene,
   tvs,
   videoTexture,
   vid1Text;
+let vid2Text;
 let camStat;
 
 window.onload = function () {
@@ -100,6 +101,9 @@ function setup() {
   let video2 = document.getElementById("vid1");
   video2.play();
 
+  let video3 = document.getElementById("vid2");
+  video3.play();
+
   videoTexture = new THREE.VideoTexture(video);
   videoTexture.minFilter = THREE.LinearFilter;
   videoTexture.magFilter = THREE.LinearFilter;
@@ -108,10 +112,15 @@ function setup() {
   vid1Text.minFilter = THREE.LinearFilter;
   vid1Text.magFilter = THREE.LinearFilter;
 
+  vid2Text = new THREE.VideoTexture(video3);
+  vid2Text.minFilter = THREE.LinearFilter;
+  vid2Text.magFilter = THREE.LinearFilter;
+
   document.addEventListener("click", (e) => {
     console.log("clicked");
     video.play();
     video2.play();
+    video3.play();
   });
 
   tvloader.load("tvs.gltf", (gltf) => {
@@ -133,6 +142,12 @@ function setup() {
       toneMapped: false,
     });
     screen1Material.map.flipY = false;
+    const screen2Material = new THREE.MeshBasicMaterial({
+      map: vid2Text,
+      side: THREE.FrontSide,
+      toneMapped: false,
+    });
+    screen2Material.map.flipY = false;
     //tvs.material = screenMaterial;
     tvs.traverse((e) => {
       if (e.isMesh && e.material.name == "ScreenTop") {
@@ -140,7 +155,7 @@ function setup() {
       } else if (e.isMesh && e.material.name == "ScreenB") {
         e.material = screenMaterial;
       } else if (e.isMesh && e.material.name == "ScreenG") {
-        e.material = screenMaterial;
+        e.material = screen2Material;
       }
     });
     scene.add(tvs);
