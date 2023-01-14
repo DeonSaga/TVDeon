@@ -1,6 +1,14 @@
 import * as THREE from "three";
 import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "https://threejs.org/examples/jsm/loaders/GLTFLoader.js";
+import { ImprovedNoise } from "https://threejs.org/examples/jsm/math/ImprovedNoise.js";
+
+import { EffectComposer } from "https://threejs.org/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "https://threejs.org/examples/jsm/postprocessing/RenderPass.js";
+import { FilmPass } from "https://threejs.org/examples/jsm/postprocessing/FilmPass.js";
+import { GlitchPass } from "https://threejs.org/examples/jsm/postprocessing/GlitchPass.js";
+import { ShaderPass } from "https://threejs.org/examples/jsm/postprocessing/ShaderPass.js";
+import { VignetteShader } from "https://threejs.org/examples/jsm/shaders/VignetteShader.js";
 
 let scene,
   renderer,
@@ -13,6 +21,10 @@ let scene,
   vid1Text;
 let vid2Text;
 let camStat;
+
+let composer1;
+
+const noise = new ImprovedNoise();
 
 window.onload = function () {
   camStat = document.getElementById("camStatText");
@@ -29,15 +41,16 @@ function setup() {
     1000
   );
 
-  camera.position.set(1.662, 5.553, 10.011);
+  camera.position.set(3.12, 5.05, 12.011);
+  camera.rotation.set(0, 0.2, 0);
 
   renderer = new THREE.WebGLRenderer({ alpha: false, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   console.log(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.update();
+  //controls = new OrbitControls(camera, renderer.domElement);
+  //controls.update();
   //-----------------------lights--------------------------
   const spotLight = new THREE.SpotLight(0x8d56d1, 25);
   spotLight.angle = Math.PI / 3;
@@ -122,6 +135,27 @@ function setup() {
     video2.play();
     video3.play();
   });
+  window.addEventListener("resize", onWindowResize, false);
+
+  const renderPass = new RenderPass(scene, camera);
+
+  const effectFilmBW = new FilmPass(0.35, 0.5, 2048, true);
+  const glitchEffect = new GlitchPass();
+
+  const vignette = VignetteShader;
+  const vignetteEffect = new ShaderPass(vignette);
+  vignetteEffect.uniforms["offset"].value = 0.95;
+  vignetteEffect.uniforms["darkness"].value = 1.6;
+  composer1 = new EffectComposer(
+    renderer,
+    new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+      stencilBuffer: true,
+    })
+  );
+  composer1.addPass(renderPass);
+  composer1.addPass(effectFilmBW);
+  //composer1.addPass(glitchEffect);
+  composer1.addPass(vignetteEffect);
 
   tvloader.load("tvs.gltf", (gltf) => {
     tvs = gltf.scene;
@@ -165,20 +199,31 @@ function setup() {
 function draw() {
   const time = performance.now() / 3000;
   videoTexture.needsUpdate = true;
+  camera.position.z = 12.06 + 16 * noise.noise(time / 6, 1, 0);
   //spotLight.position.x = Math.cos(time) * 25;
   //spotLight.position.z = Math.sin(time) * 25;
 }
 
 function animate() {
   requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
+  //controls.update();
+  //renderer.render(scene, camera);
+  composer1.render();
   draw();
   //console.log(controls.object.position);
-  var [x, y, z] = controls.object.position;
+  //var [x, y, z] = controls.object.position;
   if (camStat) {
-    camStat.innerHTML = "x: " + x + " y: " + y + " z: " + z;
+    // camStat.innerHTML = "x: " + x + " y: " + y + " z: " + z;
   }
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  composer1.setSize(window.innerWidth, window.innerHeight);
 }
 
 setup();
