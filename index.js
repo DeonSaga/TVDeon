@@ -27,8 +27,8 @@ let composer1;
 const noise = new ImprovedNoise();
 
 window.onload = function () {
-  camStat = document.getElementById("camStatText");
-  camStat.innerHTML = "Found you";
+  //camStat = document.getElementById("camStatText");
+  //camStat.innerHTML = "Found you";
 };
 
 function setup() {
