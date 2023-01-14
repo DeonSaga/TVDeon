@@ -9,6 +9,7 @@ import { FilmPass } from "https://threejs.org/examples/jsm/postprocessing/FilmPa
 import { GlitchPass } from "https://threejs.org/examples/jsm/postprocessing/GlitchPass.js";
 import { ShaderPass } from "https://threejs.org/examples/jsm/postprocessing/ShaderPass.js";
 import { VignetteShader } from "https://threejs.org/examples/jsm/shaders/VignetteShader.js";
+import { MathUtils } from "three";
 
 let scene,
   renderer,
@@ -199,7 +200,9 @@ function setup() {
 function draw() {
   const time = performance.now() / 3000;
   videoTexture.needsUpdate = true;
-  camera.position.z = 12.06 + 16 * noise.noise(time / 6, 1, 0);
+  let z = 12.06 + 16 * noise.noise(time, 1, 0);
+  camera.position.z = MathUtils.clamp(z, 8, 16);
+  camera.position.x = 3.12 + 5 * noise.noise(time, 1, -1);
   //spotLight.position.x = Math.cos(time) * 25;
   //spotLight.position.z = Math.sin(time) * 25;
 }
