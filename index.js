@@ -32,6 +32,28 @@ window.onload = function () {
   //camStat.innerHTML = "Found you";
 };
 
+function consoliseText(e) {
+  let element = document.getElementById(e);
+  let target = element.innerText;
+  let count = 0;
+  let x = 0;
+  let waiting = false;
+  element.innerText = " ";
+  window.setInterval(function () {
+    if (count <= target.length && waiting == false) {
+      element.innerText = target.substring(0, count) + "_";
+      //console.log(element.innerText + "_");
+      count += 1;
+    } else {
+      element.innerText = target;
+    }
+  }, 100);
+}
+
+function fullyLoaded() {
+  consoliseText("title");
+  setTimeout(consoliseText("desc"), 2000);
+}
 function setup() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
@@ -158,43 +180,52 @@ function setup() {
   //composer1.addPass(glitchEffect);
   composer1.addPass(vignetteEffect);
 
-  tvloader.load("tvs.gltf", (gltf) => {
-    tvs = gltf.scene;
-    const tvMat = new THREE.MeshStandardMaterial({
-      color: 0x049ef4,
-      roughness: 0.3,
-      metalness: 1,
-    });
-    const screenMaterial = new THREE.MeshBasicMaterial({
-      map: videoTexture,
-      side: THREE.FrontSide,
-      toneMapped: false,
-    });
-    screenMaterial.map.flipY = false;
-    const screen1Material = new THREE.MeshBasicMaterial({
-      map: vid1Text,
-      side: THREE.FrontSide,
-      toneMapped: false,
-    });
-    screen1Material.map.flipY = false;
-    const screen2Material = new THREE.MeshBasicMaterial({
-      map: vid2Text,
-      side: THREE.FrontSide,
-      toneMapped: false,
-    });
-    screen2Material.map.flipY = false;
-    //tvs.material = screenMaterial;
-    tvs.traverse((e) => {
-      if (e.isMesh && e.material.name == "ScreenTop") {
-        e.material = screen1Material;
-      } else if (e.isMesh && e.material.name == "ScreenB") {
-        e.material = screenMaterial;
-      } else if (e.isMesh && e.material.name == "ScreenG") {
-        e.material = screen2Material;
+  tvloader.load(
+    "tvs.gltf",
+    (gltf) => {
+      tvs = gltf.scene;
+      const tvMat = new THREE.MeshStandardMaterial({
+        color: 0x049ef4,
+        roughness: 0.3,
+        metalness: 1,
+      });
+      const screenMaterial = new THREE.MeshBasicMaterial({
+        map: videoTexture,
+        side: THREE.FrontSide,
+        toneMapped: false,
+      });
+      screenMaterial.map.flipY = false;
+      const screen1Material = new THREE.MeshBasicMaterial({
+        map: vid1Text,
+        side: THREE.FrontSide,
+        toneMapped: false,
+      });
+      screen1Material.map.flipY = false;
+      const screen2Material = new THREE.MeshBasicMaterial({
+        map: vid2Text,
+        side: THREE.FrontSide,
+        toneMapped: false,
+      });
+      screen2Material.map.flipY = false;
+      //tvs.material = screenMaterial;
+      tvs.traverse((e) => {
+        if (e.isMesh && e.material.name == "ScreenTop") {
+          e.material = screen1Material;
+        } else if (e.isMesh && e.material.name == "ScreenB") {
+          e.material = screenMaterial;
+        } else if (e.isMesh && e.material.name == "ScreenG") {
+          e.material = screen2Material;
+        }
+      });
+      scene.add(tvs);
+    },
+    function (xhr) {
+      console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+      if ((xhr.loaded / xhr.total) * 100 === 100) {
+        fullyLoaded();
       }
-    });
-    scene.add(tvs);
-  });
+    }
+  );
 }
 
 function draw() {
