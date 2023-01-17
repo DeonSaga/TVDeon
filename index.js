@@ -154,10 +154,24 @@ function setup() {
 
   document.addEventListener("click", (e) => {
     console.log("clicked");
+    changeVideo();
+  });
+
+  Array.prototype.random = function () {
+    return this[Math.floor(Math.random() * this.length)];
+  };
+
+  const changeVideo = async () => {
+    let videos = [video, video2, video3];
+    let sources = ["./Deon.mp4", "./vibing.mp4"];
+    console.log(videos.random());
+
+    videos.random().src = sources.random();
     video.play();
     video2.play();
     video3.play();
-  });
+  };
+
   window.addEventListener("resize", onWindowResize, false);
 
   const renderPass = new RenderPass(scene, camera);
