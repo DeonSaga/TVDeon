@@ -40,6 +40,46 @@ canvas {
   height: 100%;
 }
 
+#loading {
+  background-color: black;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 2000;
+  position: absolute;
+  color: white;
+}
+
+.center {
+  position: relative;
+  width: 400px;
+  text-align: center;
+  min-height: 400px;
+  padding: 0px;
+  top: 25%;
+  margin: auto;
+}
+
+#progBar {
+  border-color: white;
+  border: solid;
+  border-radius: 0px;
+  border-width: 3px;
+  padding: 3px;
+  width: auto;
+
+  margin: auto;
+  min-height: 20px;
+}
+
+#bar {
+  background-color: white;
+
+  padding: 0px;
+  min-height: 26px;
+  width: 0%;
+}
+
 .main {
   position: absolute;
   z-index: 1000;
@@ -142,5 +182,11 @@ li:hover {
 
   a {
     margin: 0.2rem;
+  }
+
+  .center {
+    margin: auto 3rem auto 3rem;
+    justify-content: center;
+    width: auto;
   }
 }

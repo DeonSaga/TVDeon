@@ -51,8 +51,11 @@ function consoliseText(e) {
 }
 
 function fullyLoaded() {
-  consoliseText("title");
-  setTimeout(consoliseText("desc"), 2000);
+  setTimeout(function () {
+    document.getElementById("loading").style.display = "none";
+    consoliseText("title");
+    setTimeout(consoliseText("desc"), 4000);
+  }, 1000);
 }
 function setup() {
   scene = new THREE.Scene();
@@ -235,6 +238,8 @@ function setup() {
     },
     function (xhr) {
       console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+      let percent = (xhr.loaded / xhr.total) * 100;
+      document.getElementById("bar").style.width = percent.toString() + "%";
       if ((xhr.loaded / xhr.total) * 100 === 100) {
         fullyLoaded();
       }
