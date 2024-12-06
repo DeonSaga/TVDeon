@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
+// import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "https://threejs.org/examples/jsm/loaders/GLTFLoader.js";
 import { ImprovedNoise } from "https://threejs.org/examples/jsm/math/ImprovedNoise.js";
 
@@ -179,13 +179,13 @@ function setup() {
 
   const renderPass = new RenderPass(scene, camera);
 
-  const effectFilmBW = new FilmPass(0.35, 0.5, 2048, true);
+  const effectFilmBW = new FilmPass(0.35, 1, 2048, true);
   const glitchEffect = new GlitchPass();
 
   const vignette = VignetteShader;
   const vignetteEffect = new ShaderPass(vignette);
   vignetteEffect.uniforms["offset"].value = 0.95;
-  vignetteEffect.uniforms["darkness"].value = 1.6;
+  vignetteEffect.uniforms["darkness"].value = 3.6;
   composer1 = new EffectComposer(
     renderer,
     new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
@@ -250,9 +250,9 @@ function setup() {
 function draw() {
   const time = performance.now() / 3000;
   videoTexture.needsUpdate = true;
-  let z = 12.06 + 16 * noise.noise(time, 1, 0);
+  let z = 12.06 + 4 * noise.noise(time, 1, 0);
   camera.position.z = MathUtils.clamp(z, 8, 16);
-  camera.position.x = 3.12 + 5 * noise.noise(time, 1, -1);
+  camera.position.x = 3.12 + 1 * noise.noise(time, 1, -1);
   //spotLight.position.x = Math.cos(time) * 25;
   //spotLight.position.z = Math.sin(time) * 25;
 }
